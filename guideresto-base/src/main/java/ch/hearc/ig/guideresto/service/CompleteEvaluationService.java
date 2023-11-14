@@ -1,6 +1,7 @@
 package ch.hearc.ig.guideresto.service;
 
 import ch.hearc.ig.guideresto.business.CompleteEvaluation;
+import ch.hearc.ig.guideresto.business.Restaurant;
 import ch.hearc.ig.guideresto.persistence.CompleteEvaluationMapper;
 
 import java.util.ArrayList;
@@ -34,4 +35,10 @@ public class CompleteEvaluationService {
         CompleteEvaluationMapper completeEvaluationMapper = CompleteEvaluationMapper.getInstance();
         return completeEvaluationMapper.findByID(id);
     }
+
+    public ArrayList<CompleteEvaluation> findByRestaurant(Restaurant restaurant) {
+        CompleteEvaluationMapper completeEvaluationMapper = CompleteEvaluationMapper.getInstance();
+        return completeEvaluationMapper.findByRestaurant(restaurant);
+    }
+
 }

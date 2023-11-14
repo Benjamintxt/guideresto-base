@@ -1,8 +1,6 @@
 package ch.hearc.ig.guideresto.persistence;
 
-import ch.hearc.ig.guideresto.business.City;
-import ch.hearc.ig.guideresto.business.Restaurant;
-import ch.hearc.ig.guideresto.business.RestaurantType;
+import ch.hearc.ig.guideresto.business.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -156,7 +154,18 @@ public class RestaurantMapper implements IMapper<Restaurant> {
                         RestaurantType restaurantType = RestaurantTypeMapper.getInstance().findByID(typeId);
                         int cityId = resultSet.getInt("fk_vill");
                         City city = CityMapper.getInstance().findByID(cityId);
-                        restaurants.add(new Restaurant(id, name, description, website, address, city, restaurantType));
+                        Restaurant restaurant = new Restaurant(id, name, description, website, address, city, restaurantType);
+
+                        ArrayList<BasicEvaluation> basicEvaluations = BasicEvaluationMapper.getInstance().findByRestaurant(restaurant);
+
+                        ArrayList<CompleteEvaluation> completeEvaluations = CompleteEvaluationMapper.getInstance().findByRestaurant(restaurant);
+
+                        ArrayList<Evaluation> allEvaluations = new ArrayList<>();
+                        allEvaluations.addAll(basicEvaluations);
+                        allEvaluations.addAll(completeEvaluations);
+                        restaurant.setEvaluations(allEvaluations);
+                        restaurants.add(restaurant);
+
                     }
                 }
             }
@@ -165,8 +174,6 @@ public class RestaurantMapper implements IMapper<Restaurant> {
         }
         return restaurants;
     }
-
-    // ... (your existing methods)
 
     public ArrayList<Restaurant> findAllForCity(City city) {
         ArrayList<Restaurant> restaurants = new ArrayList<>();

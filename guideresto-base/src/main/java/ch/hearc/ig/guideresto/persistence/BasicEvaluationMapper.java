@@ -51,7 +51,7 @@ public class BasicEvaluationMapper implements IMapper<BasicEvaluation> {
         try {
             String sql = "UPDATE LIKES SET appreciation = ?, date_eval = ?, adresse_ip = ?, fk_rest = ? WHERE numero = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, basicEvaluation.isLikeRestaurant() ? "Y" : "N");
+                statement.setString(1, basicEvaluation.isLikeRestaurant() ? "T" : "F");
                 statement.setDate(2, java.sql.Date.valueOf(basicEvaluation.getVisitDate()));
                 statement.setString(3, basicEvaluation.getIpAddress());
                 statement.setInt(4, basicEvaluation.getRestaurant().getId());
@@ -150,7 +150,7 @@ public class BasicEvaluationMapper implements IMapper<BasicEvaluation> {
                         resultSet.getInt("numero"),
                         resultSet.getDate("date_eval").toLocalDate(),
                         restaurant,
-                        resultSet.getString("appreciation").equals("Y"),
+                        resultSet.getString("appreciation").equals("T"),
                         resultSet.getString("adresse_ip")
                 );
                 evaluations.add(basicEvaluation);

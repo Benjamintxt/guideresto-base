@@ -285,15 +285,18 @@ public class CLI {
     } while (choice != 0 && choice != 6); // 6 car le restaurant est alors supprimé...
   }
 
-// Modify the following methods to use your service classes:
+
 
   private long countLikes(ArrayList<Evaluation> evaluations, boolean likeRestaurant) {
     return evaluations.stream()
-            .filter(BasicEvaluation.class::isInstance)
-            .map(BasicEvaluation.class::cast)
-            .filter(eval -> likeRestaurant == eval.isLikeRestaurant())
+            .filter(evaluation -> evaluation instanceof BasicEvaluation)
+            .map(evaluation -> (BasicEvaluation) evaluation)
+            .filter(eval -> eval.isLikeRestaurant() == likeRestaurant)
             .count();
   }
+
+
+
 
   private String getCompleteEvaluationDescription(CompleteEvaluation eval) {
     String result = "Evaluation de : " + eval.getUsername() + "\n";

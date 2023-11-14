@@ -23,6 +23,9 @@ public class Restaurant {
         this.address = new Localisation(street, city);
         this.type = type;
     }
+    public void setEvaluations(ArrayList<Evaluation> evaluations) {
+        this.evaluations = evaluations;
+    }
 
     public Integer getId() {
         return id;
