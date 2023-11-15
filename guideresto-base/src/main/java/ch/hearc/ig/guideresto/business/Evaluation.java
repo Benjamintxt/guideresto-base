@@ -25,4 +25,8 @@ public abstract class Evaluation {
   public Integer getId() {
     return id;
   }
+
+    protected void setId(int id) {
+    this.id = id;
+    }
 }

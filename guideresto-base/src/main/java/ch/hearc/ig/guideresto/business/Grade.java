@@ -24,4 +24,10 @@ public class Grade {
     public EvaluationCriteria getCriteria() {
         return criteria;
     }
+
+    public void setEvaluation(CompleteEvaluation completeEvaluation) {
+        this.evaluation = completeEvaluation;
+    }
+
+
 }

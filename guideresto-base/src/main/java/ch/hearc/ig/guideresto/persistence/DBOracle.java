@@ -12,22 +12,6 @@ public class DBOracle {
 
             sess.setAutoCommit(true);
 
-            /*
-            System.out.println("Autocomit " + sess.getAutoCommit());
-            sess.setAutoCommit(false);
-            System.out.println("Autocomit " + sess.getAutoCommit());
-            sess.commit();
-
-            DatabaseMetaData mtdt = sess.getMetaData();
-            System.out.println("URL connexion: " + mtdt.getURL());
-            System.out.println("Nom utilisateur: " + mtdt.getUserName());
-            System.out.println("Constructeur: " + mtdt.getDatabaseProductName());
-            System.out.println("Version BD: " + mtdt.getDatabaseProductVersion());
-            System.out.println("Drive: " + mtdt.getDriverName());
-            System.out.println("Driver version: " + mtdt.getDriverVersion());
-            System.out.println("supp. SQL Keywords: " + mtdt.getSQLKeywords());
-
-*/
             return sess;
         } catch (SQLException sqlerr) {
             System.out.println(sqlerr);

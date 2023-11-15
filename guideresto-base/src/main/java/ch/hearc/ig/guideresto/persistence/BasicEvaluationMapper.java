@@ -118,8 +118,7 @@ public class BasicEvaluationMapper implements IMapper<BasicEvaluation> {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        // Assuming you have a method to retrieve the associated Restaurant
-                        // Replace getRestaurantFromResultSet with your actual method
+
                         Restaurant restaurant = getRestaurantFromResultSet(resultSet);
                         BasicEvaluation basicEvaluation = new BasicEvaluation(
                                 resultSet.getInt("numero"),

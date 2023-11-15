@@ -36,4 +36,9 @@ public class CompleteEvaluation extends Evaluation {
   public ArrayList<Grade> getGrades() {
     return grades;
   }
+
+  public void setId(Integer id) {
+    super.setId(id);
+  }
+
 }

@@ -3,6 +3,7 @@ package ch.hearc.ig.guideresto.persistence;
 import ch.hearc.ig.guideresto.business.CompleteEvaluation;
 import ch.hearc.ig.guideresto.business.EvaluationCriteria;
 import ch.hearc.ig.guideresto.business.Grade;
+import ch.hearc.ig.guideresto.business.Restaurant;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,8 +34,20 @@ public class GradeMapper implements IMapper<Grade> {
             String sql = "INSERT INTO NOTES (note, fk_comm, fk_crit) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, grade.getGrade());
-                statement.setInt(2, grade.getEvaluation().getId());
-                statement.setInt(3, grade.getCriteria().getId());
+
+                if (grade.getEvaluation() != null && grade.getEvaluation().getId() != null) {
+                    int evaluationId = grade.getEvaluation().getId();
+                    statement.setInt(2, evaluationId);
+                } else {
+                    throw new SQLException("CompleteEvaluation ID is null or incomplete.");
+                }
+
+                if (grade.getCriteria() != null && grade.getCriteria().getId() != null) {
+                    statement.setInt(3, grade.getCriteria().getId());
+                } else {
+                    throw new SQLException("EvaluationCriteria ID is null or incomplete.");
+                }
+
                 statement.executeUpdate();
             }
             return grade;
@@ -43,6 +56,8 @@ public class GradeMapper implements IMapper<Grade> {
         }
         return null;
     }
+
+
 
     @Override
     public Grade update(Grade grade) {
@@ -93,7 +108,6 @@ public class GradeMapper implements IMapper<Grade> {
                 return new Grade(
                         resultSet.getInt("numero"),
                         resultSet.getInt("note"),
-                        // Assuming you have methods to find CompleteEvaluation and EvaluationCriteria by ID
                         CompleteEvaluationMapper.getInstance().findByID(resultSet.getInt("fk_comm")),
                         EvaluationCriteriaMapper.getInstance().findByID(resultSet.getInt("fk_crit"))
                 );

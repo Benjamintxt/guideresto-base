@@ -2,13 +2,10 @@ package ch.hearc.ig.guideresto.presentation;
 
 import static java.util.stream.Collectors.joining;
 
-import ch.hearc.ig.guideresto.persistence.EvaluationCriteriaMapper;
-import ch.hearc.ig.guideresto.persistence.RestaurantMapper;
-import ch.hearc.ig.guideresto.persistence.RestaurantTypeMapper;
 import ch.hearc.ig.guideresto.service.*;
 
 import ch.hearc.ig.guideresto.business.*;
-import ch.hearc.ig.guideresto.persistence.FakeItems;
+
 import java.io.PrintStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -31,7 +28,7 @@ public class CLI {
 
 
   // Injection de dépendances
-  public CLI(Scanner scanner, PrintStream printStream, FakeItems fakeItems) {
+  public CLI(Scanner scanner, PrintStream printStream) {
     this.scanner = scanner;
     this.printStream = printStream;
 
@@ -255,35 +252,36 @@ public class CLI {
 
 
   private void showRestaurant(Restaurant restaurant) {
-    String sb = restaurant.getName() + "\n" +
+    String restaurantInfo = restaurant.getName() + "\n" +
             restaurant.getDescription() + "\n" +
             restaurant.getType().getLabel() + "\n" +
             restaurant.getWebsite() + "\n" +
             restaurant.getAddress().getStreet() + ", " +
-            restaurant.getAddress().getCity().getZipCode() + " " + restaurant.getAddress().getCity()
-            .getCityName() + "\n" +
+            restaurant.getAddress().getCity().getZipCode() + " " + restaurant.getAddress().getCity().getCityName() + "\n" +
             "Nombre de likes : " + countLikes(restaurant.getEvaluations(), true) + "\n" +
-            "Nombre de dislikes : " + countLikes(restaurant.getEvaluations(), false) + "\n" +
-            "\nEvaluations reçues : " + "\n";
+            "Nombre de dislikes : " + countLikes(restaurant.getEvaluations(), false) + "\n";
 
-    String text = restaurant.getEvaluations()
+    println("Affichage d'un restaurant : ");
+    println(restaurantInfo);
+
+    // Display evaluations and grades
+    restaurant.getEvaluations()
             .stream()
             .filter(CompleteEvaluation.class::isInstance)
             .map(CompleteEvaluation.class::cast)
-            .map(this::getCompleteEvaluationDescription)
-            .collect(joining("\n"));
-
-    println("Affichage d'un restaurant : ");
-    println(sb);
-    println(text);
+            .forEach(eval -> {
+              println(getCompleteEvaluationDescription(eval));
+              println("");
+            });
 
     int choice;
-    do { // Tant que l'utilisateur n'entre pas 0 ou 6, on lui propose à nouveau les actions
+    do {
       showRestaurantMenu();
       choice = readInt();
       proceedRestaurantMenu(choice, restaurant);
-    } while (choice != 0 && choice != 6); // 6 car le restaurant est alors supprimé...
+    } while (choice != 0 && choice != 6);
   }
+
 
 
 
@@ -306,6 +304,7 @@ public class CLI {
             .map(g -> g.getCriteria().getName() + " : " + g.getGrade() + "/5")
             .collect(joining("\n", "\n", "\n"));
   }
+
 
 
   private void showRestaurantMenu() {
@@ -367,7 +366,7 @@ public class CLI {
     println("Quel commentaire aimeriez-vous publier?");
     String comment = readString();
 
-    CompleteEvaluation eval = new CompleteEvaluation(null, LocalDate.now(), restaurant, comment, username);
+    CompleteEvaluation eval = new CompleteEvaluation(restaurant.getId(), LocalDate.now(), restaurant, comment, username);
     CompleteEvaluation insertedEval = completeEvaluationService.insert(eval);
 
     println("Veuillez svp donner une note entre 1 et 5 pour chacun de ces critères : ");
@@ -406,7 +405,6 @@ public class CLI {
       newType.getRestaurants().add(restaurant);
       restaurant.setType(newType);
     }
-    editRestaurantAddress(restaurant);
 
     restaurantService.update(restaurant);
 
@@ -427,6 +425,7 @@ public class CLI {
       newCity.getRestaurants().add(restaurant);
       restaurant.getAddress().setCity(newCity);
     }
+    restaurantService.update(restaurant);
 
     println("L'adresse a bien été modifiée ! Merci !");
   }

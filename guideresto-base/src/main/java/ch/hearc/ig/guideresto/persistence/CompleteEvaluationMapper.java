@@ -27,18 +27,39 @@ public class CompleteEvaluationMapper implements IMapper<CompleteEvaluation> {
 
     @Override
     public CompleteEvaluation insert(CompleteEvaluation completeEvaluation) {
+        Restaurant restaurant = RestaurantMapper.getInstance().findByID(completeEvaluation.getRestaurant().getId());
+
         try {
             String sql = "INSERT INTO COMMENTAIRES (date_eval, commentaire, nom_utilisateur, fk_rest) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(sql)){
-                statement.setDate(1, Date.valueOf(completeEvaluation.getVisitDate()));
+            try (PreparedStatement statement = connection.prepareStatement(sql, new String[]{"numero"})) {
+                statement.setObject(1, Date.valueOf(completeEvaluation.getVisitDate()));
                 statement.setString(2, completeEvaluation.getComment());
                 statement.setString(3, completeEvaluation.getUsername());
-                statement.setInt(4, completeEvaluation.getRestaurant().getId());  // Assuming getId() exists in Restaurant
-                statement.executeUpdate();
+                statement.setInt(4, restaurant.getId());
 
-                // Insert grades
-                for (Grade grade : completeEvaluation.getGrades()) {
-                    GradeMapper.getInstance().insert(grade);
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Insertion failed, no rows affected.");
+                }
+
+                // Get the last inserted ID
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int generatedId = generatedKeys.getInt(1);
+
+                        // Set the generated ID in the CompleteEvaluation object
+                        completeEvaluation.setId(generatedId);
+
+                        // Insert grades
+                        for (Grade grade : completeEvaluation.getGrades()) {
+                            // Set the CompleteEvaluation object in each Grade
+                            grade.setEvaluation(completeEvaluation);
+                            GradeMapper.getInstance().insert(grade);
+                        }
+                    } else {
+                        throw new SQLException("Insertion failed, no ID obtained.");
+                    }
                 }
             }
             return completeEvaluation;
@@ -47,6 +68,9 @@ public class CompleteEvaluationMapper implements IMapper<CompleteEvaluation> {
         }
         return null;
     }
+
+
+
 
     @Override
     public CompleteEvaluation update(CompleteEvaluation completeEvaluation) {
@@ -76,7 +100,6 @@ public class CompleteEvaluationMapper implements IMapper<CompleteEvaluation> {
     @Override
     public void delete(CompleteEvaluation completeEvaluation) {
         try {
-            // Delete associated grades first
             for (Grade grade : completeEvaluation.getGrades()) {
                 GradeMapper.getInstance().delete(grade);
             }
