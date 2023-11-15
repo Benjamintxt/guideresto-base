@@ -2,6 +2,7 @@ package ch.hearc.ig.guideresto.presentation;
 
 import static java.util.stream.Collectors.joining;
 
+import ch.hearc.ig.guideresto.persistence.DBOracle;
 import ch.hearc.ig.guideresto.service.*;
 
 import ch.hearc.ig.guideresto.business.*;
@@ -9,6 +10,7 @@ import ch.hearc.ig.guideresto.business.*;
 import java.io.PrintStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,22 +27,24 @@ public class CLI {
   private final CompleteEvaluationService completeEvaluationService;
   private final EvaluationCriteriaService evaluationCriteriaService;
   private final GradeService gradeService;
+  private Connection connection;
 
 
   // Injection de dépendances
-  public CLI(Scanner scanner, PrintStream printStream) {
-    this.scanner = scanner;
-    this.printStream = printStream;
+    public CLI(Scanner scanner, PrintStream printStream) {
+      this.scanner = scanner;
+      this.printStream = printStream;
+      this.connection = DBOracle.createSession();
 
-    // Initialize service classes
-    this.cityService = new CityService();
-    this.restaurantService = new RestaurantService();
-    this.restaurantTypeService = new RestaurantTypeService();
-    this.basicEvaluationService = new BasicEvaluationService();
-    this.completeEvaluationService = new CompleteEvaluationService();
-    this.evaluationCriteriaService = new EvaluationCriteriaService();
-    this.gradeService = new GradeService();
-  }
+      // Initialize service classes
+      this.cityService = new CityService(connection);
+      this.restaurantService = new RestaurantService(connection);
+      this.restaurantTypeService = new RestaurantTypeService();
+      this.basicEvaluationService = new BasicEvaluationService(connection);
+      this.completeEvaluationService = new CompleteEvaluationService(connection);
+      this.evaluationCriteriaService = new EvaluationCriteriaService();
+      this.gradeService = new GradeService(connection);
+    }
 
   public void start() {
     println("Bienvenue dans GuideResto ! Que souhaitez-vous faire ?");

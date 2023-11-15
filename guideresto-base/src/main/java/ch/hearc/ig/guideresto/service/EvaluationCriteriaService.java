@@ -8,7 +8,8 @@ import ch.hearc.ig.guideresto.persistence.EvaluationCriteriaMapper;
 import java.util.ArrayList;
 
 public class EvaluationCriteriaService {
-
+    //Transactions not implemented here because we don't handle insert/update/method on EvaluationCriteria yet
+    //maybe for future use
     public ArrayList<EvaluationCriteria> getAllEvaluationCriteria() {
         EvaluationCriteriaMapper criteriaMapper = EvaluationCriteriaMapper.getInstance();
         return criteriaMapper.findAll();

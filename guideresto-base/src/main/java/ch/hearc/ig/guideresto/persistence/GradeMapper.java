@@ -3,7 +3,6 @@ package ch.hearc.ig.guideresto.persistence;
 import ch.hearc.ig.guideresto.business.CompleteEvaluation;
 import ch.hearc.ig.guideresto.business.EvaluationCriteria;
 import ch.hearc.ig.guideresto.business.Grade;
-import ch.hearc.ig.guideresto.business.Restaurant;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -131,7 +130,6 @@ public class GradeMapper implements IMapper<Grade> {
                     while (resultSet.next()) {
                         int id = resultSet.getInt("numero");
                         int gradeValue = resultSet.getInt("note");
-                        // Assuming you have methods to find CompleteEvaluation and EvaluationCriteria by ID
                         CompleteEvaluation evaluation = CompleteEvaluationMapper.getInstance().findByID(resultSet.getInt("fk_comm"));
                         EvaluationCriteria criteria = EvaluationCriteriaMapper.getInstance().findByID(resultSet.getInt("fk_crit"));
                         grades.add(new Grade(id, gradeValue, evaluation, criteria));
@@ -154,7 +152,6 @@ public class GradeMapper implements IMapper<Grade> {
                     while (resultSet.next()) {
                         int id = resultSet.getInt("numero");
                         int gradeValue = resultSet.getInt("note");
-                        // Assuming you have methods to find CompleteEvaluation and EvaluationCriteria by ID
                         CompleteEvaluation evaluation = CompleteEvaluationMapper.getInstance().findByID(resultSet.getInt("fk_comm"));
                         EvaluationCriteria criteria = EvaluationCriteriaMapper.getInstance().findByID(resultSet.getInt("fk_crit"));
                         grades.add(new Grade(id, gradeValue, evaluation, criteria));
@@ -178,7 +175,6 @@ public class GradeMapper implements IMapper<Grade> {
                     while (resultSet.next()) {
                         int id = resultSet.getInt("numero");
                         int gradeValue = resultSet.getInt("note");
-                        // Assuming you have methods to find CompleteEvaluation and EvaluationCriteria by ID
                         CompleteEvaluation evaluation = CompleteEvaluationMapper.getInstance().findByID(resultSet.getInt("fk_comm"));
                         EvaluationCriteria criteria = EvaluationCriteriaMapper.getInstance().findByID(resultSet.getInt("fk_crit"));
                         grades.add(new Grade(id, gradeValue, evaluation, criteria));

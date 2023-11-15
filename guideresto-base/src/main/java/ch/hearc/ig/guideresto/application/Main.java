@@ -11,6 +11,7 @@ public class Main {
   public static void main(String[] args) {
     var scanner = new Scanner(System.in);
     var printStream = System.out;
+
     var cli = new CLI(scanner, printStream);
 
     cli.start();
